@@ -86,6 +86,18 @@ def fetch_kumalog_aomori_sightings_csv(
 
     # 5) pandas DataFrame 化 → CSV 保存
     df = pd.DataFrame(sightings_data)
+
+    # 【加工1】sighting_datetimeから年・月・日・時を抽出
+    df['sighting_datetime'] = pd.to_datetime(df['sighting_datetime'], errors='coerce')
+    df['year'] = df['sighting_datetime'].dt.year
+    df['month'] = df['sighting_datetime'].dt.month
+    df['day'] = df['sighting_datetime'].dt.day
+    df['hour'] = df['sighting_datetime'].dt.hour
+
+    # 【加工2】sighting_conditionの中身を正規化
+    valid_conditions = ['人身被害', '痕跡(その他)', '痕跡(食害)', '目撃']
+    df.loc[~df['sighting_condition'].isin(valid_conditions), 'sighting_condition'] = '目撃'
+    
     df.to_csv(output_csv_path, index=False, encoding="utf-8-sig")
     print(f"✅ データを CSV として保存しました: {output_csv_path}")
     print("---- 先頭5行 ----")
