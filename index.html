@@ -311,7 +311,7 @@
         }, null, {position:'topleft'}).addTo(map);
 
         // --- CSV読み込み ---
-        fetch('kumalog_aomori_2026_4.csv')
+        fetch('kumalog_aomori_2026.csv')
             .then(function(r){return r.text();})
             .then(function(text) {
                 var lines=text.split('\n').filter(function(l){return l.trim();});
