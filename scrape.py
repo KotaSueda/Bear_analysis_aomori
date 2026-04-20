@@ -110,15 +110,6 @@ def fetch_bear_sightings_csv(
         df['day'] = df['sighting_datetime'].dt.day
         df['hour'] = df['sighting_datetime'].dt.hour
 
-        # 【加工2】info_type_id に基づくラベルの割り当て
-        type_mapping = {
-            '1': '目撃',
-            '2': '人身被害',
-            '3': '痕跡(食害)',
-            '4': '痕跡(その他)'
-        }
-        df['sighting_condition'] = df['info_type_id'].astype(str).map(type_mapping).fillna('目撃')
-
     # ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
     # 過去データ(アーカイブ)とのマージ処理
     # ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
