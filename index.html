@@ -928,7 +928,17 @@
                 },
                 options:{
                     responsive:true,
-                    plugins:{legend:{display:true,position:'top'}},
+                    plugins:{
+                        legend:{display:true,position:'top'},
+                        tooltip:{
+                            callbacks:{
+                                title: function(context) {
+                                    var doy = context[0].dataIndex + 1; //
+                                    return doyToLabel(doy); //
+                                }
+                            }
+                        }
+                    },
                     scales:{
                         x:{
                             ticks:{
