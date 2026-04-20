@@ -212,7 +212,7 @@
     </div>
 
     <div class="charts-section">
-        <h2>青森県ツキノワグマ目撃統計</h2>
+        <h2 id="main-title">青森県ツキノワグマ目撃統計</h2>
         <div class="chart-container">
             <h3>年別 目撃件数</h3>
             <div style="margin-bottom:8px;font-size:12px;"><span class="legend-item"><span class="legend-dot" style="background:#27ae60"></span>豊作・並作</span><span class="legend-item"><span class="legend-dot" style="background:#f0b429"></span>凶作</span><span class="legend-item"><span class="legend-dot" style="background:#e74c3c"></span>大凶作</span></div>
@@ -296,8 +296,38 @@
         var windowDays=0;
         var currentDoy=366;
 
+        // --- URLによる地域切り替え処理 ---
+        var urlParams = new URLSearchParams(window.location.search);
+        var pref = urlParams.get('pref');
+
+        var targetCsv = "";
+        var mapCenter = [];
+        var mapZoom = 8;
+        var pageTitle = "";
+
+        if (pref === 'akita') {
+            // 【秋田県の設定】（?pref=akita の場合）
+            targetCsv = "kumadas_akita_2026.csv";
+            mapCenter = [39.71863176, 140.10234516];
+            pageTitle = "秋田県ツキノワグマ情報マップ";
+            mapZoom = 8; 
+        } else {
+            // 【青森県の設定】（デフォルト、または ?pref=aomori の場合）
+            targetCsv = "kumalog_aomori_2026.csv";
+            mapCenter = [40.82, 140.75];
+            pageTitle = "青森県ツキノワグマ情報マップ";
+            mapZoom = 8;
+        }
+
+        // タブのタイトルと、画面のタイトル（h2）を自動書き換え
+        document.title = pageTitle;
+        var mainTitleEl = document.getElementById("main-title");
+        if (mainTitleEl) {
+            mainTitleEl.textContent = pageTitle + "（目撃統計）";
+        }
+
         // --- 地図初期化 ---
-        map = L.map('map').setView([40.82, 140.75], 8);
+        map = L.map('map').setView(mapCenter, mapZoom);
         var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution:'&copy; OpenStreetMap contributors', maxZoom:18
         });
@@ -311,8 +341,8 @@
         }, null, {position:'topleft'}).addTo(map);
 
         // --- CSV読み込み ---
-        fetch('kumalog_aomori_2026.csv')
-            .then(function(r){return r.text();})
+        fetch(targetCsv)
+            .then(response => response.text())
             .then(function(text) {
                 var lines=text.split('\n').filter(function(l){return l.trim();});
                 var header=parseCSVLine(lines[0]);
